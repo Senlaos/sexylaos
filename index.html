@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>กำลังเชื่อมต่อเซิร์ฟเวอร์...</title>
+  <!-- Prefetch / Preconnect เพื่อเร่งความเร็วเมื่อเปลี่ยนลิงก์ -->
+  <link rel="dns-prefetch" href="//sxbauto-novaglobal.store">
+  <link rel="dns-prefetch" href="//sxbauto-coreglobal.store">
+  <link rel="dns-prefetch" href="//sxbauto-qbar.store">
+  <link rel="preconnect" href="https://sxbauto-novaglobal.store" crossorigin>
+  <link rel="preconnect" href="https://sxbauto-coreglobal.store" crossorigin>
+  <link rel="preconnect" href="https://sxbauto-qbar.store" crossorigin>
+  <!-- ✅ ใส่โลโก้ของร้าน: เปลี่ยน href ให้เป็นไฟล์ของคุณ เช่น logo.png หรือ URL ภายนอก -->
+  <link rel="preload" as="image" href="logo.png">
+  <style>
+    :root {
+      --bg1:#0b0b0b; --bg2:#1a1a1a; --acc:#00e6ac; --soft:#ffffff22; --text:#eaeaea; --sub:#bdbdbd;
+    }
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body {
+      margin: 0; color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% 10%, #121212, transparent),
+                  radial-gradient(1000px 700px at 90% 90%, #111, transparent),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: grid; place-items: center; padding: 24px;
+    }
+    .card {
+      width: min(560px, 92vw);
+      background: #101010aa; backdrop-filter: blur(6px);
+      border: 1px solid #2a2a2a; border-radius: 20px; padding: 28px 24px; text-align: center;
+      box-shadow: 0 10px 30px #00000055, inset 0 1px 0 #ffffff0f;
+      position: relative; overflow: hidden;
+    }
+    /* ✅ โซนโลโก้แทน Loading */
+    .brand {
+      width: 140px; height: 140px; margin: 0 auto 16px; position: relative; display:grid; place-items:center;
+    }
+    .brand .ring {
+      position:absolute; inset:0; border-radius:50%;
+      border: 12px solid var(--soft); border-top-color: var(--acc);
+      animation: spin 0.9s linear infinite;
+    }
+    .brand img {
+      max-width: 86%; max-height: 86%; object-fit: contain; border-radius: 16px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.5));
+      animation: breathe 2.2s ease-in-out infinite;
+      opacity: 0; transform: scale(.96); transition: opacity .35s ease, transform .35s ease;
+    }
+    .brand img.show { opacity: 1; transform: scale(1); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes breathe {
+      0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0.4)); }
+      50% { transform: scale(1.03); filter: drop-shadow(0 0 12px rgba(0,230,172,.45)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0.4)); }
+    }
+    h1 { font-size: 22px; margin: 6px 0 4px; letter-spacing: .3px; }
+    p  { margin: 0; color: var(--sub); font-size: 14px; }
+    .bar { margin: 18px auto 12px; width: 100%; height: 8px; border-radius: 999px; background: #2a2a2a; overflow: hidden; }
+    .bar > i { display:block; height:100%; width:30%; background: linear-gradient(90deg, #ffffff22, var(--acc)); filter: saturate(140%); border-radius: 999px; animation: progress 1.8s ease-in-out infinite; }
+    @keyframes progress { 0%{ margin-left: -30%; } 50%{ margin-left: 50%; } 100%{ margin-left: 120%; } }
+    .list { text-align:left; margin-top:10px; font-size:13px; color:#cfcfcf; }
+    .list b { color: var(--acc); font-weight:600; }
+    .actions { display:flex; gap:10px; justify-content:center; margin-top:16px; }
+    .btn { appearance:none; border:1px solid #2d2d2d; color:#fff; background:#161616; padding:10px 14px; border-radius:10px; cursor:pointer; transition:.2s ease; font-size:14px; }
+    .btn:hover { transform: translateY(-1px); border-color:#3a3a3a; }
+    .muted { color:#a8a8a8; font-size:12px; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="ring" aria-hidden="true"></div>
+      <!-- ✅ วางโลโก้ร้านที่นี่: เปลี่ยน src ใน JS หรือแทนที่ logo.png ใน repo -->
+      <img id="brandLogo" alt="Brand logo" />
+    </div>
+
+    <h1>กำลังตรวจสอบเซิร์ฟเวอร์…</h1>
+    <p>ถ้าลิงก์แรกเข้าไม่ได้ 5 วินาที จะข้ามไปลิงก์ถัดไปอัตโนมัติ</p>
+    <div class="bar"><i></i></div>
+    <div class="list" id="status"></div>
+    <div class="actions">
+      <button class="btn" id="skip">ข้ามไปลิงก์ถัดไป</button>
+      <button class="btn" id="retry" style="display:none;">ลองใหม่อีกครั้ง</button>
+    </div>
+    <div class="muted">ระบบจะพยายามเชื่อมต่อให้อัตโนมัติบน iOS / Android / Desktop</div>
+  </div>
+
+  <script>
+    // *** ตั้งค่าลิงก์ที่นี่ ***
+    const URLS = [
+      "https://sxbauto-coreglobal.store",
+      "https://sxbauto-qbar.store"
+    ];
+    const TIMEOUT_MS = 5000; // 5 วินาทีต่อหนึ่งลิงก์
+
+    // ✅ ตั้งค่าโลโก้ที่นี่: วางไฟล์ logo.png ไว้ที่ root ของ repo หรือใช้ URL ภายนอก
+    const LOGO_SRC = 'logo.png'; // เช่น 'https://your-cdn.com/yourlogo.png'
+
+    const logoImg  = document.getElementById('brandLogo');
+    logoImg.src = LOGO_SRC;
+    logoImg.onload  = () => logoImg.classList.add('show');
+    logoImg.onerror = () => { logoImg.style.display = 'none'; }; // ถ้าโหลดโลโก้ไม่ได้ จะแสดงเฉพาะวงแหวน
+
+    const statusEl = document.getElementById('status');
+    const btnSkip  = document.getElementById('skip');
+    const btnRetry = document.getElementById('retry');
+
+    let leftPage = false; // จะเป็น true เมื่อหน้าเริ่มออก (navigation เกิดขึ้นจริง)
+
+    window.addEventListener('pagehide', () => leftPage = true, { once:true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') leftPage = true;
+    });
+
+    function log(msg){
+      const line = document.createElement('div');
+      line.textContent = msg; statusEl.appendChild(line);
+    }
+
+    function tryLink(i){
+      if (i >= URLS.length) {
+        log('❌ ไม่พบลิงก์ที่พร้อมใช้งาน');
+        document.querySelector('h1').textContent = 'เชื่อมต่อไม่สำเร็จ';
+        document.querySelector('p').textContent  = 'โปรดตรวจสอบอินเทอร์เน็ตหรือกลับมาลองใหม่ภายหลัง';
+        btnRetry.style.display = 'inline-block';
+        btnSkip.style.display  = 'none';
+        return;
+      }
+
+      const url = URLS[i];
+      log(`⏳ กำลังลองลิงก์ ${i+1}: ${url}`);
+
+      // ตั้งนาฬิกาจับเวลา 5 วิ ถ้ายังอยู่หน้าเดิม ให้ลองลิงก์ถัดไป
+      const timer = setTimeout(() => {
+        if (!leftPage) {
+          log(`⚠️ ลิงก์ ${i+1} ไม่ตอบกลับใน ${TIMEOUT_MS/1000}s → ข้ามไปลิงก์ถัดไป`);
+          tryLink(i+1);
+        }
+      }, TIMEOUT_MS);
+
+      // พยายามนำทางออกจากหน้า (ถ้าสำเร็จ เราจะไม่เห็น timeout ทำงาน)
+      try {
+        window.top.location.href = url; // ใช้ top เผื่ออยู่ใน in-app webview/iframe
+      } catch (e) {
+        // ถ้ามี policy ขวาง ให้ลองวิธีสำรองเปิดในแท็บใหม่
+        window.location.assign(url);
+      }
+
+      // ปุ่มข้ามแบบแมนนวล
+      btnSkip.onclick = () => {
+        clearTimeout(timer);
+        if (!leftPage) { log('⏩ ผู้ใช้กดข้าม ไปยังลิงก์ถัดไป'); tryLink(i+1); }
+      };
+    }
+
+    btnRetry.onclick = () => {
+      statusEl.innerHTML = ''; leftPage = false; btnRetry.style.display='none'; btnSkip.style.display='inline-block';
+      tryLink(0);
+    };
+
+    // เริ่มทำงาน
+    tryLink(0);
+  </script>
+</body>
+</html>
